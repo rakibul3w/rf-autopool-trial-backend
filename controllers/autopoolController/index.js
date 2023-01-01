@@ -9,19 +9,20 @@ const enterToFirstAutopool = async(req, res)=>{
         // user info
         const user = await User.findOne({user_id});
         // Autopool Information
-        const autopoolInfo = await AutopoolInfo.findOne({autopoo_name: "autopool-one"});
+        const autopoolInfo = await AutopoolInfo.findOne({autopool_name: "autopool-one"});
+        console.log(autopoolInfo)
         // conditions --->>
         if(!user.topup_status){
             res.status(503).json({message: "Service unavailable for this user."})
         }else{
             // check autopool one exist or not
                 // if not exist then create first document for outopool one
-            if(!autopoolInfo?.autopoo_name){
+            if(!autopoolInfo?.autopool_name){
                 // create first document
                 await AutopoolInfo.create({
-                    autopoo_name: "autopool-one",
+                    autopool_name: "autopool-one",
                     current_up_level: 1,
-                    current_up_index: 1,
+                    current_up_level_index: 1,
                     current_down_level: 2,
                     current_down_level_index: 0,
                     current_up_level_limit: 1,
@@ -43,10 +44,12 @@ const enterToFirstAutopool = async(req, res)=>{
                     top2: "root",
                     child: []
                 })
+                res.status(200).json({message: "successfull"})
             }else{
                 // let current_current_parent;
                 // let current_down_level_child;
                 const recent_parent = autopoolInfo?.tree_history?.filter(p=> p.up_level === autopoolInfo?.current_up_level && autopoolInfo?.current_up_level_index === p.this_child_index )
+                console.log("51 recent parent ", recent_parent)
                 const current_down_level_child = autopoolInfo?.tree_history?.filter(p=> p.parent === recent_parent[0]?.user_id)
                 
                 // this is only condition when current parent will be stay as next current parent
@@ -54,7 +57,7 @@ const enterToFirstAutopool = async(req, res)=>{
                     const current_parent = recent_parent[0]?.user_id;
                     const top2_parent = recent_parent[0]?.parent;
                     // aupdate autopool info
-                    await AutopoolInfo.findOneAndUpdate({autopoo_name: "autopool-one"},{
+                    await AutopoolInfo.findOneAndUpdate({autopool_name: "autopool-one"},{
                         $set: {
                             current_up_level: autopoolInfo?.current_up_level,
                             current_up_index: autopoolInfo?.current_up_level_index,
@@ -91,15 +94,17 @@ const enterToFirstAutopool = async(req, res)=>{
                     })
                     // distribute autopool income to top1 and top2 parent
                     // ------------ //
+                    res.status(200).json({message: "successfull"})
                 }else{
                     // check up level corss it's inedx limit or not
                     // if it's not corss it's index limit then swtich up level index to +1 and make that index as current head node
                     // if it's cross it's limit then then switch to it's down line find that down line's 1st index and make it current head node
-                    if(autopoolInfo?.current_up_index !== autopoolInfo?.current_up_level_limit){
+                    if(autopoolInfo?.current_up_level_index !== autopoolInfo?.current_up_level_limit){
                         // here if up level is not corss the index limit
                         const current_parent = autopoolInfo?.tree_history?.filter(p=>autopoolInfo?.current_up_level === p?.up_level && p?.this_child_index === autopoolInfo?.current_up_level_index + 1);
+                        console.log("104 curret_parent ", current_parent)
                         const top2_parent = current_parent[0]?.parent;
-                        await AutopoolInfo.findOneAndUpdate({autopoo_name: "autopool-one"},{
+                        await AutopoolInfo.findOneAndUpdate({autopool_name: "autopool-one"},{
                             $set: {
                                 current_up_level: autopoolInfo?.current_up_level,
                                 current_up_index: autopoolInfo?.current_up_level_index + 1,
@@ -111,7 +116,7 @@ const enterToFirstAutopool = async(req, res)=>{
                                         up_level: autopoolInfo?.current_up_level,
                                         down_level: autopoolInfo?.current_down_level,
                                         parent: current_parent[0]?.user_id,
-                                        this_child_index: autopoolInfo?.current_down_level_index + 1
+                                        this_child_index: 1
                                 }]
                             }
                         })
@@ -136,12 +141,13 @@ const enterToFirstAutopool = async(req, res)=>{
                         })
                         // distribute autopool income to top1 and top2 parent
                         // ------------ //
+                        res.status(200).json({message: "successfull"})
                     }else{
                         // else up level corss it's index limit
                         const previous_parent = autopoolInfo?.tree_history?.filter(p=>autopoolInfo?.current_up_level ===p?.up_level && p.this_child_index === 1)
-                        const current_parent = autopoolInfo?.tree_history?.filter(c=> c?.parent === previous_parent[0]?.user_id && this_child_index === 1)
+                        const current_parent = autopoolInfo?.tree_history?.filter(c=> c?.parent === previous_parent[0]?.user_id && c?.this_child_index === 1)
                         const top2_parent = current_parent[0]?.parent;
-                        await AutopoolInfo.findOneAndUpdate({autopoo_name: "autopool-one"},{
+                        await AutopoolInfo.findOneAndUpdate({autopool_name: "autopool-one"},{
                             $set: {
                                 current_up_level: current_parent[0]?.down_level,
                                 current_up_index: current_parent[0]?.this_child_index,
@@ -178,6 +184,7 @@ const enterToFirstAutopool = async(req, res)=>{
                         })
                         // distribute autopool income to top1 and top2 parent
                         // ------------ //
+                        res.status(200).json({message: "successfull"})
                     }
                 }
             }
@@ -188,4 +195,8 @@ const enterToFirstAutopool = async(req, res)=>{
             message: error.toString()
           })
     }
+}
+
+module.exports = {
+    enterToFirstAutopool,
 }

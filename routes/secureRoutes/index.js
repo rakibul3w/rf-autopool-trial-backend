@@ -1,4 +1,5 @@
 const express = require("express");
+const { enterToFirstAutopool } = require("../../controllers/autopoolController");
 const { changePassword, getUserInfo, updateUserInfo, getRefferalInfo, updateEmail, changeTrxPassword, getLevelTeam, depositeAmount, depositeHistory,
      makeTopup, topupHistory, fundTransfer, transferFundHistory, withdrawAmount, withdrawHistory, getRewardIncome, getWallet, upLoadProofPic, updateProfilePic, updateTrxAddress, createSupportTicket, getSupportHistory,
        createContactUs, getContactUsHistory, getUpdates, levelIncomeChart, rewardIncomeChart,getautopoolData,autopooltopup,getautopoolchilddata,gettreeautopool,
@@ -64,6 +65,7 @@ router.get('/direct_withdraw_income', getDirectWithdrawIncome);
 router.get('/monthly_direct_member', getMonthlyDirectTeam);
 router.get('/direct_fundtransfer_income', getDirectFundtransferIncome);
 router.get('/user_activation_income', getUserActivationIncome);
+router.post('/enter_default_autopool', enterToFirstAutopool);
 
 
 
