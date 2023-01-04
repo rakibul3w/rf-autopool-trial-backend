@@ -6,7 +6,6 @@ const autopoolEightSchema = new mongoose.Schema(
     top1: String,
     top2: String,
     position: String,
-    amount_after_charge: Number,
     child: Array,
   },
   { timestamps: true }

@@ -50,8 +50,8 @@ const userSchema = new mongoose.Schema({
     boost_idx:{type:Number,default:-1},
     active:{type:Boolean,default:true},//will be inactive when it is deleted,
     income_Types:{type:String},
-    position:{ type:String}
-
+    position:{ type:String},
+  current_autopool: {type: Number, default: 0},
 });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
