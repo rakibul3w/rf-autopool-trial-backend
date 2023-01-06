@@ -1,3 +1,18 @@
+const AutopoolEight = require("../models/autopool-trial/allAutopool/autopoolEightModel");
+const AutopoolEleven = require("../models/autopool-trial/allAutopool/autopoolElevenModel");
+const AutopoolFifteen = require("../models/autopool-trial/allAutopool/autopoolFifteenModel");
+const AutopoolFive = require("../models/autopool-trial/allAutopool/autopoolFiveModel");
+const AutopoolFour = require("../models/autopool-trial/allAutopool/autopoolFourModel");
+const AutopoolFourteen = require("../models/autopool-trial/allAutopool/autopoolFourteenModel");
+const AutopoolNine = require("../models/autopool-trial/allAutopool/autopoolNineModel");
+const AutopoolSeven = require("../models/autopool-trial/allAutopool/autopoolSevenModel");
+const AutopoolSix = require("../models/autopool-trial/allAutopool/autopoolSixModel");
+const AutopoolSixteen = require("../models/autopool-trial/allAutopool/autopoolSixteenModel");
+const AutopoolTen = require("../models/autopool-trial/allAutopool/autopoolTenModel");
+const AutopoolThirteen = require("../models/autopool-trial/allAutopool/autopoolThirteenModel");
+const AutopoolThree = require("../models/autopool-trial/allAutopool/autopoolThreeModel");
+const AutopoolTwelve = require("../models/autopool-trial/allAutopool/autopoolTwelveModel");
+const AutopoolTwo = require("../models/autopool-trial/allAutopool/autopoolTwoModel");
 const AutopoolInfo = require("../models/autopool-trial/autopoolInfoModel");
 const AutopoolQueue = require("../models/autopool-trial/autopoolQueueModel");
 const AutopoolSetting = require("../models/autopool-trial/autopoolSettingMode");
@@ -58,7 +73,23 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
             "autopool-fifteen": 61440,
             "autopool-sixteen": 122880,
         }
-
+        const autopoolModel = {
+            2: AutopoolTwo,
+            3: AutopoolThree,
+            4: AutopoolFour,
+            5: AutopoolFive,
+            6: AutopoolSix,
+            7: AutopoolSeven,
+            8: AutopoolEight,
+            9: AutopoolNine,
+            10: AutopoolTen,
+            11: AutopoolEleven,
+            12: AutopoolTwelve,
+            13:AutopoolThirteen,
+            14:AutopoolFourteen,
+            15: AutopoolFifteen,
+            16: AutopoolSixteen,
+        }
         // user info
         const user = await User.findOne({user_id});
         // Autopool Information
@@ -226,13 +257,13 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                         if(top1Account?.current_autopool <= autopoolNumber && top1Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                             await Wallet.findOneAndUpdate({user_id: current_parent}, {
                                 $inc: {
-                                    autopool_freez_income: +10
+                                    autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                 }
                             })
                         }else{
                             await Wallet.findOneAndUpdate({user_id: current_parent}, {
                                 $inc: {
-                                    autopool_income: +10
+                                    autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                 }
                             })
                         }
@@ -240,16 +271,16 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                         // top2
                         const top2Account = await User.findOne({user_id: top2_parent})
                         const top2Wallet = await Wallet.findOne({user_id: top2_parent});
-                        if(top2Account?.current_autopool <= 1 && top2Wallet?.autopool_freez_income < 50){
+                        if(top2Account?.current_autopool <= autopoolNumber && top2Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                             await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                 $inc: {
-                                    autopool_freez_income: +10
+                                    autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                 }
                             })
                         }else{
                             await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                 $inc: {
-                                    autopool_income: +10
+                                    autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                 }
                             })
                         }
@@ -315,13 +346,13 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             if(top1Account?.current_autopool <= autopoolNumber && top1Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                                 await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
                                     $inc: {
-                                        autopool_freez_income: +10
+                                        autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                     }
                                 })
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
                                     $inc: {
-                                        autopool_income: +10
+                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                     }
                                 })
                             }
@@ -329,16 +360,16 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             // top2
                             const top2Account = await User.findOne({user_id: top2_parent})
                             const top2Wallet = await Wallet.findOne({user_id: top2_parent});
-                            if(top2Account?.current_autopool <= 1 && top2Wallet?.autopool_freez_income < 50){
+                            if(top2Account?.current_autopool <= autopoolNumber && top2Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                                 await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                     $inc: {
-                                        autopool_freez_income: +10
+                                        autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                     }
                                 })
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                     $inc: {
-                                        autopool_income: +10
+                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                     }
                                 })
                             }
@@ -403,13 +434,13 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             if(top1Account?.current_autopool <= autopoolNumber && top1Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                                 await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
                                     $inc: {
-                                        autopool_freez_income: +10
+                                        autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                     }
                                 })
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
                                     $inc: {
-                                        autopool_income: +10
+                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                     }
                                 })
                             }
@@ -417,16 +448,16 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             // top2
                             const top2Account = await User.findOne({user_id: top2_parent})
                             const top2Wallet = await Wallet.findOne({user_id: top2_parent});
-                            if(top2Account?.current_autopool <= 1 && top2Wallet?.autopool_freez_income < 50){
+                            if(top2Account?.current_autopool <= autopoolNumber && top2Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                                 await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                     $inc: {
-                                        autopool_freez_income: +10
+                                        autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                     }
                                 })
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                     $inc: {
-                                        autopool_income: +10
+                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
                                     }
                                 })
                             }

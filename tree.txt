@@ -1,0 +1,162 @@
+const userAutopooldataArray = [
+  {
+    name: "RF001",
+    autopool: 1,
+    show: true,
+    level: 0,
+    child: [
+      {
+        name: "RF002",
+        show: true,
+        level: 1,
+        child: [
+          {
+            name: "RF005",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF006",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF007",
+            level: 2,
+            child: [],
+          },
+        ],
+      },
+      {
+        name: "RF003",
+        show: true,
+        level: 1,
+        child: [
+          {
+            name: "RF008",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF009",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF010",
+            level: 2,
+            child: [],
+          },
+        ],
+      },
+      {
+        name: "RF004",
+        show: true,
+        level: 1,
+        child: [
+          {
+            name: "RF0011",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF0012",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF0013",
+            level: 2,
+            child: [],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: "RF0011",
+    autopool: 2,
+    show: true,
+    level: 0,
+    child: [
+      {
+        name: "RF002",
+        show: true,
+        level: 1,
+        child: [
+          {
+            name: "RF005",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF006",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF007",
+            level: 2,
+            child: [],
+          },
+        ],
+      },
+      {
+        name: "RF003",
+        show: true,
+        level: 1,
+        child: [
+          {
+            name: "RF008",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF009",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF010",
+            level: 2,
+            child: [],
+          },
+        ],
+      },
+      {
+        name: "RF004",
+        show: true,
+        level: 1,
+        child: [
+          {
+            name: "RF0011",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF0012",
+            show: true,
+            level: 2,
+            child: [],
+          },
+          {
+            name: "RF0013",
+            level: 2,
+            child: [],
+          },
+        ],
+      },
+    ],
+  },
+];

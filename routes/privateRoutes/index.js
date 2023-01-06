@@ -3,7 +3,7 @@ const { getAllUser, getActiveUser, getBlockedUser, changeUserStatus, userAnalyti
      allDepositeHistory, successDepositeHistory, rejectDepositeHistory, allWithdrawHistory, successWithdrawHistory, rejectWithdrawHistory, fundTransferReport, levelIncomeData,
       totalInvest, roiIncomeData, changePassword, updateEmail, changeDepositeStatus, changeWithdrawStatus, makeTopup, deleteUser, editUser, getAllSupportTicket, getAllContactUs,
        createUpdates, rewardIncomeData, createRoi,stoproi,startroi, changePopUpImg ,showroi,hideroi,startautopool,stopautopool,startreward,stopreward, editdisplayoptions, getroyaltymembers,
-       viewdisplayoptions,sendtoroyaltymembers, getEligibleUserForGift, sendGiftAllEligibleUser, sendGiftSingleEligibleUser, getALLGiftIncomeHistory, sendReward, transferFundByAdmin, getDirectLevelIncome, getIndirectLevelIncome, changeVideoLink, teamStatistics, adminFundtransfer, getDirectWithdrawIncome} = require("../../controllers/privateControllers");
+       viewdisplayoptions,sendtoroyaltymembers, getEligibleUserForGift, sendGiftAllEligibleUser, sendGiftSingleEligibleUser, getALLGiftIncomeHistory, sendReward, transferFundByAdmin, getDirectLevelIncome, getIndirectLevelIncome, changeVideoLink, teamStatistics, adminFundtransfer, getDirectWithdrawIncome, changeAutopoolStatus, createAllAutopoolSeeting} = require("../../controllers/privateControllers");
        const { boostgettreeautopool,gettreeautopool}=require('../../controllers/secureControllers');
 const { verifyJWT, verifyAdmin } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -81,6 +81,9 @@ router.post("/change_video_link", changeVideoLink);
 router.post('/team_statistics', teamStatistics);
 router.get('/admin_fundtransfer', adminFundtransfer);
 router.get('/direct_withdraw_income', getDirectWithdrawIncome);
+router.put('/change_autopool_status', changeAutopoolStatus);
+//
+router.post('/create_autopool_setting', createAllAutopoolSeeting);
 
 
 module.exports = router;

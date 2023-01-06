@@ -23,6 +23,7 @@ const GiftedUser = require("../../models/giftedUserModel");
 const getIstTime = require("../../config/getTime");
 const VideoData = require("../../models/videoModel");
 const Level = require("../../models/levelModel");
+const AutopoolSetting = require("../../models/autopool-trial/autopoolSettingMode");
 
 
 const sendtoroyaltymembers=async(req,res)=>{
@@ -1811,6 +1812,55 @@ const getDirectWithdrawIncome = async (req, res)=>{
   }
 }
 
+const changeAutopoolStatus = async(req, res)=>{
+  try {
+    const autopoolName = req.body.autopool_name;
+    const autopoolStatus = req.body.autopool_status;
+    await AutopoolSetting.findOneAndUpdate({autopool_name: autopoolName},{
+      $set:{
+        status: autopoolStatus
+      }
+    })
+    res.status(200).json({message: "Autopool status changed successfully"})
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// create initial all autopool setting
+// run this only once when server depoloy
+const createAllAutopoolSeeting = async(req, res)=>{
+  try {
+    const value = [
+      "autopool-one",
+      "autopool-two",
+      "autopool-three",
+      "autopool-four",
+      "autopool-five",
+      "autopool-six",
+      "autopool-seven",
+      "autopool-eight",
+      "autopool-nine",
+      "autopool-ten",
+      "autopool-eleven",
+      "autopool-twelve",
+      "autopool-thirteen",
+      "autopool-fourteen",
+      "autopool-fifteen",
+      "autopool-sixteen",
+    ]
+    for(let i = 0; i < 16; i++){
+      await AutopoolSetting.create({
+        autopool_name: value[i],
+        status: true,
+      })
+    }
+    res.status(200).json({message: "autopool settings created succesfully"})
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 module.exports = {
   getAllUser,
   getActiveUser,
@@ -1868,4 +1918,7 @@ module.exports = {
   teamStatistics,
   adminFundtransfer,
   getDirectWithdrawIncome,
+  changeAutopoolStatus,
+  //
+  createAllAutopoolSeeting,
 };
