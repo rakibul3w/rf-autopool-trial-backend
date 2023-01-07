@@ -51,6 +51,22 @@ const RewardIncome = require("../../models/rewardModel");
 const DirectWithdrawIncome = require("../../models/directWithdrawIncomeMode");
 const GiftedUser = require("../../models/giftedUserModel");
 const DirectFundtransferIncome = require("../../models/directFundtransferIncome");
+const AutopoolOne = require("../../models/autopool-trial/allAutopool/autopoolOneModel");
+const AutopoolTwo = require("../../models/autopool-trial/allAutopool/autopoolTwoModel");
+const AutopoolThree = require("../../models/autopool-trial/allAutopool/autopoolThreeModel");
+const AutopoolFour = require("../../models/autopool-trial/allAutopool/autopoolFourModel");
+const AutopoolFive = require("../../models/autopool-trial/allAutopool/autopoolFiveModel");
+const AutopoolSix = require("../../models/autopool-trial/allAutopool/autopoolSixModel");
+const AutopoolSeven = require("../../models/autopool-trial/allAutopool/autopoolSevenModel");
+const AutopoolEight = require("../../models/autopool-trial/allAutopool/autopoolEightModel");
+const AutopoolNine = require("../../models/autopool-trial/allAutopool/autopoolNineModel");
+const AutopoolTen = require("../../models/autopool-trial/allAutopool/autopoolTenModel");
+const AutopoolEleven = require("../../models/autopool-trial/allAutopool/autopoolElevenModel");
+const AutopoolTwelve = require("../../models/autopool-trial/allAutopool/autopoolTwelveModel");
+const AutopoolThirteen = require("../../models/autopool-trial/allAutopool/autopoolThirteenModel");
+const AutopoolFourteen = require("../../models/autopool-trial/allAutopool/autopoolFourteenModel");
+const AutopoolFifteen = require("../../models/autopool-trial/allAutopool/autopoolFifteenModel");
+const AutopoolSixteen = require("../../models/autopool-trial/allAutopool/autopoolSixteenModel");
 
 const royaltyincomehistory=async(req,res)=>{
 
@@ -3951,6 +3967,102 @@ const getUserActivationIncome = async(req, res)=>{
   }
 }
 
+// Autopool History
+const GetAutopoolHistory = async(req, res)=>{
+  try {
+    const user_id = req.auth.id;
+    const incomeAmount = [
+      10,
+      20,
+      40,
+      60,
+      80,
+      120,
+      240,
+      480,
+      960,
+      1920,
+      3840,
+      7680,
+      15360,
+      30720,
+      61440,
+      122880,
+    ]
+    // finf autopools
+    const autopool1Level1 = await AutopoolOne.find({top1: user_id});
+    const autopool1Level2 = await AutopoolOne.find({top2: user_id});
+    
+    const autopool2Level1 = await AutopoolTwo.find({top1: user_id});
+    const autopool2Level2 = await AutopoolTwo.find({top2: user_id});
+
+    const autopool3Level1 = await AutopoolThree.find({top1: user_id});
+    const autopool3Level2 = await AutopoolThree.find({top2: user_id});
+
+    const autopool4Level1 = await AutopoolFour.find({top1: user_id});
+    const autopool4Level2 = await AutopoolFour.find({top2: user_id});
+
+    const autopool5Level1 = await AutopoolFive.find({top1: user_id});
+    const autopool5Level2 = await AutopoolFive.find({top2: user_id});
+
+    const autopool6Level1 = await AutopoolSix.find({top1: user_id});
+    const autopool6Level2 = await AutopoolSix.find({top2: user_id});
+
+    const autopool7Level1 = await AutopoolSeven.find({top1: user_id});
+    const autopool7Level2 = await AutopoolSeven.find({top2: user_id});
+
+    const autopool8Level1 = await AutopoolEight.find({top1: user_id});
+    const autopool8Level2 = await AutopoolEight.find({top2: user_id});
+
+    const autopool9Level1 = await AutopoolNine.find({top1: user_id});
+    const autopool9Level2 = await AutopoolNine.find({top2: user_id});
+
+    const autopool10Level1 = await AutopoolTen.find({top1: user_id});
+    const autopool10Level2 = await AutopoolTen.find({top2: user_id});
+
+    const autopool11Level1 = await AutopoolEleven.find({top1: user_id});
+    const autopool11Level2 = await AutopoolEleven.find({top2: user_id});
+
+    const autopool12Level1 = await AutopoolTwelve.find({top1: user_id});
+    const autopool12Level2 = await AutopoolTwelve.find({top2: user_id});
+
+    const autopool13Level1 = await AutopoolThirteen.find({top1: user_id});
+    const autopool13Level2 = await AutopoolThirteen.find({top2: user_id});
+
+    const autopool14Level1 = await AutopoolFourteen.find({top1: user_id});
+    const autopool14Level2 = await AutopoolFourteen.find({top2: user_id});
+
+    const autopool15Level1 = await AutopoolFifteen.find({top1: user_id});
+    const autopool15Level2 = await AutopoolFifteen.find({top2: user_id});
+
+    const autopool16Level1 = await AutopoolSixteen.find({top1: user_id});
+    const autopool16Level2 = await AutopoolSixteen.find({top2: user_id});
+
+    const autoPoolData = {
+      firstautopool: [{ total: autopool1Level1?.length * incomeAmount[1 - 1] }, { total: autopool1Level2?.length * incomeAmount[1 - 1] }],
+      secondautopool: [{ total: autopool2Level1?.length * incomeAmount[2]} - 1, { total: autopool2Level2?.length * incomeAmount[2 - 1] }],
+      thirdautopool: [{ total: autopool3Level1?.length * incomeAmount[3 - 1] }, { total: autopool3Level2?.length * incomeAmount[3 - 1] }],
+      fourthautopool: [{ total: autopool4Level1?.length * incomeAmount[4 - 1] }, { total: autopool4Level2?.length * incomeAmount[4 - 1] }],
+      fifthautopool: [{ total: autopool5Level1?.length * incomeAmount[5 - 1] }, { total: autopool5Level2?.length * incomeAmount[5 - 1] }],
+      VIautopool: [{ total: autopool6Level1?.length * incomeAmount[6 - 1] }, { total: autopool6Level2?.length * incomeAmount[6 - 1] }],
+      VIIautopool: [{ total: autopool7Level1?.length * incomeAmount[7 - 1] }, { total: autopool7Level2?.length * incomeAmount[7 - 1] }],
+      VIIIautopool: [{ total: autopool8Level1?.length * incomeAmount[8 - 1] }, { total: autopool8Level2?.length * incomeAmount[8 - 1] }],
+      IXautopool: [{ total: autopool9Level1?.length * incomeAmount[9 - 1] }, { total: autopool9Level2?.length * incomeAmount[9 - 1] }],
+      Xautopool: [{ total: autopool10Level1?.length * incomeAmount[10 - 1] }, { total: autopool10Level2?.length * incomeAmount[10 - 1] }],
+      XIautopool: [{ total: autopool11Level1?.length * incomeAmount[11 - 1] }, { total: autopool11Level2?.length * incomeAmount[11 - 1] }],
+      XIIautopool: [{ total: autopool12Level1?.length * incomeAmount[12 - 1] }, { total: autopool12Level2?.length * incomeAmount[12 - 1] }],
+      XIIIautopool: [{ total: autopool13Level1?.length * incomeAmount[13 - 1] }, { total: autopool13Level2?.length * incomeAmount[13 - 1] }],
+      XIVautopool: [{ total: autopool14Level1?.length * incomeAmount[14 - 1] }, { total: autopool14Level2?.length * incomeAmount[14 - 1] }],
+      XVautopool: [{ total: autopool15Level1?.length * incomeAmount[15 - 1] }, { total: autopool15Level2?.length * incomeAmount[15 - 1] }],
+      XVIautopool: [{ total: autopool16Level1?.length * incomeAmount[16 - 1] }, { total: autopool16Level2?.length * incomeAmount[16 - 1] }],
+    };
+
+    res.status(200).json({autoPoolData});
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 module.exports = {
   getUserInfo,
   updateUserInfo,
@@ -3998,4 +4110,6 @@ module.exports = {
   getMonthlyDirectTeam,
   getDirectFundtransferIncome,
   getUserActivationIncome,
+  //
+  GetAutopoolHistory,
 };

@@ -3,7 +3,7 @@ const { enterToFirstAutopool } = require("../../controllers/autopoolController")
 const { changePassword, getUserInfo, updateUserInfo, getRefferalInfo, updateEmail, changeTrxPassword, getLevelTeam, depositeAmount, depositeHistory,
      makeTopup, topupHistory, fundTransfer, transferFundHistory, withdrawAmount, withdrawHistory, getRewardIncome, getWallet, upLoadProofPic, updateProfilePic, updateTrxAddress, createSupportTicket, getSupportHistory,
        createContactUs, getContactUsHistory, getUpdates, levelIncomeChart, rewardIncomeChart,getautopoolData,autopooltopup,getautopoolchilddata,gettreeautopool,
-       boosttopup,boostgettreeautopool,getautopoolupdatehistory,getcurrentautopool,getboosterhistory,getboostupdatehistory , royaltyincomehistory, getGiftIncomeHistory, getDirectLevelIncome, getIndirectLevelIncome, UserActivation, getDirectWithdrawIncome, getMonthlyDirectTeam, getDirectFundtransferIncome, getUserActivationIncome} = require("../../controllers/secureControllers");
+       boosttopup,boostgettreeautopool,getautopoolupdatehistory,getcurrentautopool,getboosterhistory,getboostupdatehistory , royaltyincomehistory, getGiftIncomeHistory, getDirectLevelIncome, getIndirectLevelIncome, UserActivation, getDirectWithdrawIncome, getMonthlyDirectTeam, getDirectFundtransferIncome, getUserActivationIncome, GetAutopoolHistory} = require("../../controllers/secureControllers");
 const { verifyJWT, verifyUser } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
 const { updatePasswordValidationHandler, updatePasswordValidators, updateTrxPasswordValidators, updateTrxPasswordValidationHandler, updateEmailValidators, updateEmailValidationHandler, topupValidators, topupValidationHandler, fundTransferValidationHandler, fundTransferValidators, depositAmountValidators, depositAmountValidationHandler, withdrawAmountValidationHandler, withdrawAmountValidators, updateTxrAddressValidators, updateTxrAddressValidationHandler, supportTicketValidationHandler, supportTicketValidators, contactusValidationHandler, contactusValidators } = require("../../validation/inputValidation");
@@ -68,6 +68,8 @@ router.get('/user_activation_income', getUserActivationIncome);
 router.post('/enter_default_autopool', enterToFirstAutopool);
 
 
+//
+router.get('/autopool_history', GetAutopoolHistory);
 
 
 

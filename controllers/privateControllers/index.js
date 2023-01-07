@@ -24,6 +24,22 @@ const getIstTime = require("../../config/getTime");
 const VideoData = require("../../models/videoModel");
 const Level = require("../../models/levelModel");
 const AutopoolSetting = require("../../models/autopool-trial/autopoolSettingMode");
+const AutopoolOne = require("../../models/autopool-trial/allAutopool/autopoolOneModel");
+const AutopoolTwo = require("../../models/autopool-trial/allAutopool/autopoolTwoModel");
+const AutopoolThree = require("../../models/autopool-trial/allAutopool/autopoolThreeModel");
+const AutopoolFour = require("../../models/autopool-trial/allAutopool/autopoolFourModel");
+const AutopoolFive = require("../../models/autopool-trial/allAutopool/autopoolFiveModel");
+const AutopoolSix = require("../../models/autopool-trial/allAutopool/autopoolSixModel");
+const AutopoolSeven = require("../../models/autopool-trial/allAutopool/autopoolSevenModel");
+const AutopoolEight = require("../../models/autopool-trial/allAutopool/autopoolEightModel");
+const AutopoolNine = require("../../models/autopool-trial/allAutopool/autopoolNineModel");
+const AutopoolTen = require("../../models/autopool-trial/allAutopool/autopoolTenModel");
+const AutopoolEleven = require("../../models/autopool-trial/allAutopool/autopoolElevenModel");
+const AutopoolTwelve = require("../../models/autopool-trial/allAutopool/autopoolTwelveModel");
+const AutopoolThirteen = require("../../models/autopool-trial/allAutopool/autopoolThirteenModel");
+const AutopoolFourteen = require("../../models/autopool-trial/allAutopool/autopoolFourteenModel");
+const AutopoolFifteen = require("../../models/autopool-trial/allAutopool/autopoolFifteenModel");
+const AutopoolSixteen = require("../../models/autopool-trial/allAutopool/autopoolSixteenModel");
 
 
 const sendtoroyaltymembers=async(req,res)=>{
@@ -1827,14 +1843,69 @@ const changeAutopoolStatus = async(req, res)=>{
   }
 }
 
+const getAutopoolUser = async(req, res)=>{
+  try {
+    const allUsers = await User.find({ current_autopool: { $gt: 0 } });
+    let autopoolUsers = []
+    allUsers?.map(u=> autopoolUsers?.push(u?.user_id));
+
+    res.status(200).json({users: autopoolUsers})
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 const autopoolTreeStructure = async(req, res)=>{
   try {
     const user_id = req.body.user_id;
-    let mainDoc = [
-      {
-        
+    const autopoolModel = {
+      2: AutopoolOne,
+      2: AutopoolTwo,
+      3: AutopoolThree,
+      4: AutopoolFour,
+      5: AutopoolFive,
+      6: AutopoolSix,
+      7: AutopoolSeven,
+      8: AutopoolEight,
+      9: AutopoolNine,
+      10: AutopoolTen,
+      11: AutopoolEleven,
+      12: AutopoolTwelve,
+      13:AutopoolThirteen,
+      14:AutopoolFourteen,
+      15: AutopoolFifteen,
+      16: AutopoolSixteen,
+    }
+    let tree = []
+    for(let i = 1; i < 17; i++){
+      let doc = {
+        user_id,
+        autopool: i,
+        level: 0,
+        child: []
       }
-    ]
+      const level1pool = await autopoolModel[i].find({top1: user_id}).sort({createdAt: -1});
+      for(let j = 0; j < level1pool?.length; j++){
+        let level1Doc = {
+          user_id: level1pool[j]?.user_id,
+          level: 1,
+          child: []
+        }
+        const level2pool = await autopoolModel[i].find({top1: level1pool[j]?.user_id}).sort({createdAt: -1});
+        for(let k = 0; k < level2pool?.length; k++){
+          let level2Doc = {
+            user_id: level2pool[k]?.user_id,
+            level: 2,
+            child: []
+          }
+          level1Doc?.child?.push(level2Doc)
+        }
+        doc?.child?.push(level1Doc)
+      }
+      tree.push(doc)
+    }
+
+    res.status(200).json({autopoolTree: tree})
   } catch (error) {
     console.log(error)
   }
@@ -1934,4 +2005,6 @@ module.exports = {
   changeAutopoolStatus,
   //
   createAllAutopoolSeeting,
+  autopoolTreeStructure,
+  getAutopoolUser,
 };
