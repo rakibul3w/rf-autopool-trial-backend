@@ -1827,6 +1827,19 @@ const changeAutopoolStatus = async(req, res)=>{
   }
 }
 
+const autopoolTreeStructure = async(req, res)=>{
+  try {
+    const user_id = req.body.user_id;
+    let mainDoc = [
+      {
+        
+      }
+    ]
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 // create initial all autopool setting
 // run this only once when server depoloy
 const createAllAutopoolSeeting = async(req, res)=>{

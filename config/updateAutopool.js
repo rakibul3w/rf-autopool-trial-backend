@@ -1,3 +1,4 @@
+const AdminWallet = require("../models/adminWalletModel");
 const AutopoolEight = require("../models/autopool-trial/allAutopool/autopoolEightModel");
 const AutopoolEleven = require("../models/autopool-trial/allAutopool/autopoolElevenModel");
 const AutopoolFifteen = require("../models/autopool-trial/allAutopool/autopoolFifteenModel");
@@ -16,7 +17,11 @@ const AutopoolTwo = require("../models/autopool-trial/allAutopool/autopoolTwoMod
 const AutopoolInfo = require("../models/autopool-trial/autopoolInfoModel");
 const AutopoolQueue = require("../models/autopool-trial/autopoolQueueModel");
 const AutopoolSetting = require("../models/autopool-trial/autopoolSettingMode");
+const RoyaltiIncome = require("../models/autopool-trial/royaltyModel");
+const IncomeLevelUpdate = require("../models/incomeLevelUpdate");
 const User = require("../models/userModel");
+const Wallet = require("../models/walletModel");
+const generateString = require("./generateRandomString");
 
 const updateAutopool = async(autopoolNumber, user_id, Model) =>{
     try {
@@ -90,6 +95,24 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
             15: AutopoolFifteen,
             16: AutopoolSixteen,
         }
+
+        const sponsorIncome = {
+            "autopool-two": 5,
+            "autopool-three": 10,
+            "autopool-four": 15,
+            "autopool-five": 20,
+            "autopool-six": 25,
+            "autopool-seven": 30,
+            "autopool-eight": 35,
+            "autopool-nine": 40,
+            "autopool-ten": 45,
+            "autopool-eleven": 50,
+            "autopool-twelve": 55,
+            "autopool-thirteen": 60,
+            "autopool-fourteen": 65,
+            "autopool-fifteen": 70,
+            "autopool-sixteen": 75,
+        }
         // user info
         const user = await User.findOne({user_id});
         // Autopool Information
@@ -98,9 +121,7 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
         const autopoolSetting = await AutopoolSetting.findOne({autopool_name: value[autopoolNumber]});
         // console.log(autopoolInfo)
         // conditions --->>
-        if(!user.topup_status){
-            res.status(503).json({message: "Service unavailable for this user."})
-        }else{
+        if(user.topup_status){
             // check system autopool setting
             if(!autopoolSetting?.status){
                 // find out autopool one queue
@@ -117,7 +138,7 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                         }
                     })
                 }
-                res.status(400).json({message: "System autopool is off now by admin. Your id is now in queue to enter on autopool."})
+                // res.status(400).json({message: "System autopool is off now by admin. Your id is now in queue to enter on autopool."})
             }else{
                 // check autopool one exist or not
                 // if not exist then create first document for outopool one
@@ -156,7 +177,46 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             current_autopool: autopoolNumber
                         }
                     })
-                    res.status(200).json({message: "successfull"})
+
+                    // income level update
+                    // sponsor 
+                    await Wallet.findOneAndUpdate({user_id: user?.sponsor_id}, {
+                        $inc: {
+                            level_update_income: +sponsorIncome[value[autopoolNumber]],
+                            total_income: +sponsorIncome[value[autopoolNumber]]
+                        }
+                    })
+                    await IncomeLevelUpdate.create({
+                        user_id: user?.sponsor_id,
+                        transaction_id: generateString(),
+                        amount: sponsorIncome[value[autopoolNumber]],
+                        autopool: autopoolNumber,
+                        income_from: user_id
+                    })
+                    // admin 
+                    await AdminWallet.findOneAndUpdate({user_id: "ADMIN"}, {
+                        $inc: {
+                            level_update_income: +sponsorIncome[value[autopoolNumber]],
+                            total_amount: +sponsorIncome[value[autopoolNumber]]
+                        }
+                    })
+                    await IncomeLevelUpdate.create({
+                        user_id: "ADMIN",
+                        transaction_id: generateString(),
+                        amount: sponsorIncome[value[autopoolNumber]],
+                        autopool: autopoolNumber,
+                        income_from: user_id
+                    })
+
+                    // Inser on Royalty
+                    if(autopoolNumber === 11){
+                        RoyaltiIncome.create({
+                            user_id,
+                            status: true,
+                        })
+                    }
+
+                    // res.status(200).json({message: "successfull"})
                 }else{
                     // let current_current_parent;
                     // let current_down_level_child;
@@ -237,6 +297,45 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                                 current_autopool: autopoolNumber
                             }
                         })
+
+                        // income level update
+                        // sponsor 
+                        await Wallet.findOneAndUpdate({user_id: user?.sponsor_id}, {
+                            $inc: {
+                                level_update_income: +sponsorIncome[value[autopoolNumber]],
+                                total_income: +sponsorIncome[value[autopoolNumber]]
+                            }
+                        })
+                        await IncomeLevelUpdate.create({
+                            user_id: user?.sponsor_id,
+                            transaction_id: generateString(),
+                            amount: sponsorIncome[value[autopoolNumber]],
+                            autopool: autopoolNumber,
+                            income_from: user_id
+                        })
+                        // admin 
+                        await AdminWallet.findOneAndUpdate({user_id: "ADMIN"}, {
+                            $inc: {
+                                level_update_income: +sponsorIncome[value[autopoolNumber]],
+                                total_amount: +sponsorIncome[value[autopoolNumber]]
+                            }
+                        })
+                        await IncomeLevelUpdate.create({
+                            user_id: "ADMIN",
+                            transaction_id: generateString(),
+                            amount: sponsorIncome[value[autopoolNumber]],
+                            autopool: autopoolNumber,
+                            income_from: user_id
+                        })
+
+                        // Inser on Royalty
+                        if(autopoolNumber === 11){
+                            RoyaltiIncome.create({
+                                user_id,
+                                status: true,
+                            })
+                        }
+
                         // push this user to the top1 child array
                         await Model.findOneAndUpdate({user_id: current_parent},{
                             $push: {
@@ -254,7 +353,7 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                         // top1
                         const top1Account = await User.findOne({user_id: current_parent})
                         const top1Wallet = await Wallet.findOne({user_id: current_parent});
-                        if(top1Account?.current_autopool <= autopoolNumber && top1Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
+                        if(autopoolNumber < 16 && top1Account?.current_autopool <= autopoolNumber && top1Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                             await Wallet.findOneAndUpdate({user_id: current_parent}, {
                                 $inc: {
                                     autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
@@ -263,7 +362,8 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                         }else{
                             await Wallet.findOneAndUpdate({user_id: current_parent}, {
                                 $inc: {
-                                    autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
+                                    autopool_income: +parseInt(incomeAmount[value[autopoolNumber]]),
+                                    total_income: +parseInt(incomeAmount[value[autopoolNumber]]),
                                 }
                             })
                         }
@@ -271,7 +371,7 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                         // top2
                         const top2Account = await User.findOne({user_id: top2_parent})
                         const top2Wallet = await Wallet.findOne({user_id: top2_parent});
-                        if(top2Account?.current_autopool <= autopoolNumber && top2Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
+                        if(autopoolNumber < 16 && top2Account?.current_autopool <= autopoolNumber && top2Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                             await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                 $inc: {
                                     autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
@@ -280,12 +380,33 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                         }else{
                             await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                 $inc: {
-                                    autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
+                                    autopool_income: +parseInt(incomeAmount[value[autopoolNumber]]),
+                                    total_income: +parseInt(incomeAmount[value[autopoolNumber]]),
                                 }
                             })
                         }
                         // check sponsor's autopool automatic upgrade
-                        res.status(200).json({message: "successfull"})
+                        // top1 
+                        const updateedWalletTop1 = await Wallet.findOne({user_id: current_parent})
+                        if(autopoolNumber < 16 && updateedWalletTop1?.autopool_freez_income >= upgradeAmount[value[autopoolNumber]] && top1Account?.current_autopool <= autopoolNumber){
+                            updateAutopool(autopoolNumber+1, top1Account?.user_id, autopoolModel[value[autopoolNumber+1]])
+                            await Wallet.findOneAndUpdate({user_id: current_parent}, {
+                                $set: {
+                                    autopool_freez_income: 0
+                                }
+                            })
+                        }
+                        // top2
+                        const updateedWalletTop2 = await Wallet.findOne({user_id: top2_parent})
+                        if(autopoolNumber < 16 && updateedWalletTop2?.autopool_freez_income >= upgradeAmount[value[autopoolNumber]] && top2Account?.current_autopool <= autopoolNumber){
+                            updateAutopool(autopoolNumber+1, top2Account?.user_id, autopoolModel[value[autopoolNumber+1]])
+                            await Wallet.findOneAndUpdate({user_id: top2_parent}, {
+                                $set: {
+                                    autopool_freez_income: 0
+                                }
+                            })
+                        }
+                        // res.status(200).json({message: "successfull"})
                     }else{
                         // check up level corss it's inedx limit or not
                         // if it's not corss it's index limit then swtich up level index to +1 and make that index as current head node
@@ -320,12 +441,51 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                                 top2: top2_parent,
                                 child: []
                             })
+
+                            // income level update
                             // update current autopool for that user
                             await User.findOneAndUpdate({user_id},{
                                 $set: {
                                     current_autopool: autopoolNumber
                                 }
                             })
+                            // sponsor 
+                            await Wallet.findOneAndUpdate({user_id: user?.sponsor_id}, {
+                                $inc: {
+                                    level_update_income: +sponsorIncome[value[autopoolNumber]],
+                                    total_income: +sponsorIncome[value[autopoolNumber]]
+                                }
+                            })
+                            await IncomeLevelUpdate.create({
+                                user_id: user?.sponsor_id,
+                                transaction_id: generateString(),
+                                amount: sponsorIncome[value[autopoolNumber]],
+                                autopool: autopoolNumber,
+                                income_from: user_id
+                            })
+                            // admin 
+                            await AdminWallet.findOneAndUpdate({user_id: "ADMIN"}, {
+                                $inc: {
+                                    level_update_income: +sponsorIncome[value[autopoolNumber]],
+                                    total_amount: +sponsorIncome[value[autopoolNumber]]
+                                }
+                            })
+                            await IncomeLevelUpdate.create({
+                                user_id: "ADMIN",
+                                transaction_id: generateString(),
+                                amount: sponsorIncome[value[autopoolNumber]],
+                                autopool: autopoolNumber,
+                                income_from: user_id
+                            })
+                            
+                            // Inser on Royalty
+                            if(autopoolNumber === 11){
+                                RoyaltiIncome.create({
+                                    user_id,
+                                    status: true,
+                                })
+                            }
+
                             // push this user to the top1 child array
                             await Model.findOneAndUpdate({user_id: current_parent[0]?.user_id},{
                                 $push: {
@@ -343,7 +503,7 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             // top1
                             const top1Account = await User.findOne({user_id: current_parent[0]?.user_id})
                             const top1Wallet = await Wallet.findOne({user_id: current_parent[0]?.user_id});
-                            if(top1Account?.current_autopool <= autopoolNumber && top1Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
+                            if(autopoolNumber < 16 && top1Account?.current_autopool <= autopoolNumber && top1Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                                 await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
                                     $inc: {
                                         autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
@@ -352,7 +512,8 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
                                     $inc: {
-                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
+                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]]),
+                                        total_income: +parseInt(incomeAmount[value[autopoolNumber]]),
                                     }
                                 })
                             }
@@ -360,7 +521,7 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             // top2
                             const top2Account = await User.findOne({user_id: top2_parent})
                             const top2Wallet = await Wallet.findOne({user_id: top2_parent});
-                            if(top2Account?.current_autopool <= autopoolNumber && top2Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
+                            if(autopoolNumber < 16 && top2Account?.current_autopool <= autopoolNumber && top2Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                                 await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                     $inc: {
                                         autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
@@ -369,12 +530,33 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                     $inc: {
-                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
+                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]]),
+                                        total_income: +parseInt(incomeAmount[value[autopoolNumber]]),
                                     }
                                 })
                             }
                             // check sponsor's autopool automatic upgrade
-                            res.status(200).json({message: "successfull"})
+                            // top1 
+                            const updateedWalletTop1 = await Wallet.findOne({user_id: current_parent[0]?.user_id})
+                            if(autopoolNumber < 16 && updateedWalletTop1?.autopool_freez_income >= upgradeAmount[value[autopoolNumber]] && top1Account?.current_autopool <= autopoolNumber){
+                                updateAutopool(autopoolNumber+1, top1Account?.user_id, autopoolModel[value[autopoolNumber+1]])
+                                await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
+                                    $set: {
+                                        autopool_freez_income: 0
+                                    }
+                                })
+                            }
+                            // top2
+                            const updateedWalletTop2 = await Wallet.findOne({user_id: top2_parent})
+                            if(autopoolNumber < 16 && updateedWalletTop2?.autopool_freez_income >= upgradeAmount[value[autopoolNumber]] && top2Account?.current_autopool <= autopoolNumber){
+                                updateAutopool(autopoolNumber+1, top2Account?.user_id, autopoolModel[value[autopoolNumber+1]])
+                                await Wallet.findOneAndUpdate({user_id: top2_parent}, {
+                                    $set: {
+                                        autopool_freez_income: 0
+                                    }
+                                })
+                            }
+                            // res.status(200).json({message: "successfull"})
                         }else{
                             // else up level corss it's index limit
                             const previous_parent = autopoolInfo?.tree_history?.filter(p=>autopoolInfo?.current_up_level ===p?.down_level && p.this_child_index === 1)
@@ -414,6 +596,45 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                                     current_autopool: autopoolNumber
                                 }
                             })
+
+                            // income level update
+                            // sponsor 
+                            await Wallet.findOneAndUpdate({user_id: user?.sponsor_id}, {
+                                $inc: {
+                                    level_update_income: +sponsorIncome[value[autopoolNumber]],
+                                    total_income: +sponsorIncome[value[autopoolNumber]]
+                                }
+                            })
+                            await IncomeLevelUpdate.create({
+                                user_id: user?.sponsor_id,
+                                transaction_id: generateString(),
+                                amount: sponsorIncome[value[autopoolNumber]],
+                                autopool: autopoolNumber,
+                                income_from: user_id
+                            })
+                            // admin 
+                            await AdminWallet.findOneAndUpdate({user_id: "ADMIN"}, {
+                                $inc: {
+                                    level_update_income: +sponsorIncome[value[autopoolNumber]],
+                                    total_amount: +sponsorIncome[value[autopoolNumber]]
+                                }
+                            })
+                            await IncomeLevelUpdate.create({
+                                user_id: "ADMIN",
+                                transaction_id: generateString(),
+                                amount: sponsorIncome[value[autopoolNumber]],
+                                autopool: autopoolNumber,
+                                income_from: user_id
+                            })
+                            
+                            // Inser on Royalty
+                            if(autopoolNumber === 11){
+                                RoyaltiIncome.create({
+                                    user_id,
+                                    status: true,
+                                })
+                            }
+
                             // push this user to the top1 child array
                             await Model.findOneAndUpdate({user_id: current_parent[0]?.user_id},{
                                 $push: {
@@ -431,7 +652,7 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             // top1
                             const top1Account = await User.findOne({user_id: current_parent[0]?.user_id})
                             const top1Wallet = await Wallet.findOne({user_id: current_parent[0]?.user_id});
-                            if(top1Account?.current_autopool <= autopoolNumber && top1Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
+                            if(autopoolNumber < 16 && top1Account?.current_autopool <= autopoolNumber && top1Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                                 await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
                                     $inc: {
                                         autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
@@ -440,7 +661,8 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
                                     $inc: {
-                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
+                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]]),
+                                        total_income: +parseInt(incomeAmount[value[autopoolNumber]]),
                                     }
                                 })
                             }
@@ -448,7 +670,7 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             // top2
                             const top2Account = await User.findOne({user_id: top2_parent})
                             const top2Wallet = await Wallet.findOne({user_id: top2_parent});
-                            if(top2Account?.current_autopool <= autopoolNumber && top2Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
+                            if(autopoolNumber < 16 && top2Account?.current_autopool <= autopoolNumber && top2Wallet?.autopool_freez_income < upgradeAmount[value[autopoolNumber]]){
                                 await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                     $inc: {
                                         autopool_freez_income: +parseInt(incomeAmount[value[autopoolNumber]])
@@ -457,12 +679,33 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                     $inc: {
-                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]])
+                                        autopool_income: +parseInt(incomeAmount[value[autopoolNumber]]),
+                                        total_income: +parseInt(incomeAmount[value[autopoolNumber]]),
                                     }
                                 })
                             }
                             // check sponsor's autopool automatic upgrade
-                            res.status(200).json({message: "successfull"})
+                            // top1 
+                            const updateedWalletTop1 = await Wallet.findOne({user_id: current_parent[0]?.user_id})
+                            if(autopoolNumber < 16 && updateedWalletTop1?.autopool_freez_income >= upgradeAmount[value[autopoolNumber]] && top1Account?.current_autopool <= autopoolNumber){
+                                updateAutopool(autopoolNumber+1, top1Account?.user_id, autopoolModel[value[autopoolNumber+1]])
+                                await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
+                                    $set: {
+                                        autopool_freez_income: 0
+                                    }
+                                })
+                            }
+                            // top2
+                            const updateedWalletTop2 = await Wallet.findOne({user_id: top2_parent})
+                            if(autopoolNumber < 16 && updateedWalletTop2?.autopool_freez_income >= upgradeAmount[value[autopoolNumber]] && top2Account?.current_autopool <= autopoolNumber){
+                                updateAutopool(autopoolNumber+1, top2Account?.user_id, autopoolModel[value[autopoolNumber+1]])
+                                await Wallet.findOneAndUpdate({user_id: top2_parent}, {
+                                    $set: {
+                                        autopool_freez_income: 0
+                                    }
+                                })
+                            }
+                            // res.status(200).json({message: "successfull"})
                         }
                     }
                 }
@@ -470,9 +713,9 @@ const updateAutopool = async(autopoolNumber, user_id, Model) =>{
         }
     } catch (error) {
         console.log(error)
-        res.status(500).json({
-            message: error.toString()
-          })
+        // res.status(500).json({
+            // message: error.toString()
+        //   })
     }
 }
 

@@ -10,6 +10,7 @@ const walletSchema = new mongoose.Schema(
     direct_fund_transfer_income: { type: Number, default: 0 },
     direct_withdraw_income: { type: Number, default: 0 },
     autopool_income: { type: Number, default: 0 },
+    level_update_income: { type: Number, default: 0 },
     autopool_freez_income: { type: Number, default: 0 },
     reward_income: { type: Number },
     gift_income: { type: Number },

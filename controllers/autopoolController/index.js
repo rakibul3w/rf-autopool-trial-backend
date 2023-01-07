@@ -1,4 +1,6 @@
+const updateAutopool = require("../../config/updateAutopool");
 const AutopoolOne = require("../../models/autopool-trial/allAutopool/autopoolOneModel");
+const AutopoolTwo = require("../../models/autopool-trial/allAutopool/autopoolTwoModel");
 const AutopoolInfo = require("../../models/autopool-trial/autopoolInfoModel");
 const AutopoolQueue = require("../../models/autopool-trial/autopoolQueueModel");
 const AutopoolSetting = require("../../models/autopool-trial/autopoolSettingMode");
@@ -182,7 +184,8 @@ const enterToFirstAutopool = async(req, res)=>{
                         }else{
                             await Wallet.findOneAndUpdate({user_id: current_parent}, {
                                 $inc: {
-                                    autopool_income: +10
+                                    autopool_income: +10,
+                                    total_income: +10,
                                 }
                             })
                         }
@@ -199,11 +202,32 @@ const enterToFirstAutopool = async(req, res)=>{
                         }else{
                             await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                 $inc: {
-                                    autopool_income: +10
+                                    autopool_income: +10,
+                                    total_income: +10,
                                 }
                             })
                         }
                         // check sponsor's autopool automatic upgrade
+                        // top1 
+                        const updateedWalletTop1 = await Wallet.findOne({user_id: current_parent})
+                        if(updateedWalletTop1?.autopool_freez_income >= 50 && top1Account?.current_autopool <= 1){
+                            updateAutopool(2, top1Account?.user_id, AutopoolTwo)
+                            await Wallet.findOneAndUpdate({user_id: current_parent}, {
+                                $set: {
+                                    autopool_freez_income: 0
+                                }
+                            })
+                        }
+                        // top2
+                        const updateedWalletTop2 = await Wallet.findOne({user_id: top2_parent})
+                        if(updateedWalletTop2?.autopool_freez_income >= 50 && top2Account?.current_autopool <= 1){
+                            updateAutopool(2, top2Account?.user_id, AutopoolTwo)
+                            await Wallet.findOneAndUpdate({user_id: top2_parent}, {
+                                $set: {
+                                    autopool_freez_income: 0
+                                }
+                            })
+                        }
                         res.status(200).json({message: "successfull"})
                     }else{
                         // check up level corss it's inedx limit or not
@@ -271,7 +295,8 @@ const enterToFirstAutopool = async(req, res)=>{
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
                                     $inc: {
-                                        autopool_income: +10
+                                        autopool_income: +10,
+                                        total_income: +10,
                                     }
                                 })
                             }
@@ -288,11 +313,32 @@ const enterToFirstAutopool = async(req, res)=>{
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                     $inc: {
-                                        autopool_income: +10
+                                        autopool_income: +10,
+                                        total_income: +10,
                                     }
                                 })
                             }
                             // check sponsor's autopool automatic upgrade
+                            // top1 
+                            const updateedWalletTop1 = await Wallet.findOne({user_id: current_parent[0]?.user_id})
+                            if(updateedWalletTop1?.autopool_freez_income >= 50 && top1Account?.current_autopool <= 1){
+                                updateAutopool(2, top1Account?.user_id, AutopoolTwo)
+                                await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
+                                    $set: {
+                                        autopool_freez_income: 0
+                                    }
+                                })
+                            }
+                            // top2
+                            const updateedWalletTop2 = await Wallet.findOne({user_id: top2_parent})
+                            if(updateedWalletTop2?.autopool_freez_income >= 50 && top2Account?.current_autopool <= 1){
+                                updateAutopool(2, top2Account?.user_id, AutopoolTwo)
+                                await Wallet.findOneAndUpdate({user_id: top2_parent}, {
+                                    $set: {
+                                        autopool_freez_income: 0
+                                    }
+                                })
+                            }
                             res.status(200).json({message: "successfull"})
                         }else{
                             // else up level corss it's index limit
@@ -359,7 +405,8 @@ const enterToFirstAutopool = async(req, res)=>{
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
                                     $inc: {
-                                        autopool_income: +10
+                                        autopool_income: +10,
+                                        total_income: +10,
                                     }
                                 })
                             }
@@ -376,11 +423,32 @@ const enterToFirstAutopool = async(req, res)=>{
                             }else{
                                 await Wallet.findOneAndUpdate({user_id: top2_parent}, {
                                     $inc: {
-                                        autopool_income: +10
+                                        autopool_income: +10,
+                                        total_income: +10,
                                     }
                                 })
                             }
                             // check sponsor's autopool automatic upgrade
+                            // top1 
+                            const updateedWalletTop1 = await Wallet.findOne({user_id: current_parent[0]?.user_id})
+                            if(updateedWalletTop1?.autopool_freez_income >= 50 && top1Account?.current_autopool <= 1){
+                                updateAutopool(2, top1Account?.user_id, AutopoolTwo)
+                                await Wallet.findOneAndUpdate({user_id: current_parent[0]?.user_id}, {
+                                    $set: {
+                                        autopool_freez_income: 0
+                                    }
+                                })
+                            }
+                            // top2
+                            const updateedWalletTop2 = await Wallet.findOne({user_id: top2_parent})
+                            if(updateedWalletTop2?.autopool_freez_income >= 50 && top2Account?.current_autopool <= 1){
+                                updateAutopool(2, top2Account?.user_id, AutopoolTwo)
+                                await Wallet.findOneAndUpdate({user_id: top2_parent}, {
+                                    $set: {
+                                        autopool_freez_income: 0
+                                    }
+                                })
+                            }
                             res.status(200).json({message: "successfull"})
                         }
                     }
