@@ -1859,7 +1859,7 @@ const autopoolTreeStructure = async(req, res)=>{
   try {
     const user_id = req.body.user_id;
     const autopoolModel = {
-      2: AutopoolOne,
+      1: AutopoolOne,
       2: AutopoolTwo,
       3: AutopoolThree,
       4: AutopoolFour,
@@ -1878,29 +1878,34 @@ const autopoolTreeStructure = async(req, res)=>{
     }
     let tree = []
     for(let i = 1; i < 17; i++){
-      let doc = {
-        user_id,
-        autopool: i,
-        level: 0,
-        child: []
-      }
-      const level1pool = await autopoolModel[i].find({top1: user_id}).sort({createdAt: -1});
-      for(let j = 0; j < level1pool?.length; j++){
-        let level1Doc = {
-          user_id: level1pool[j]?.user_id,
-          level: 1,
+      const Model = autopoolModel[i]
+      const userAutopool = await Model.findOne({user_id});
+      let doc ={};
+      if(userAutopool?.user_id){
+        doc = {
+          user_id,
+          autopool: i,
+          level: 0,
           child: []
         }
-        const level2pool = await autopoolModel[i].find({top1: level1pool[j]?.user_id}).sort({createdAt: -1});
-        for(let k = 0; k < level2pool?.length; k++){
-          let level2Doc = {
-            user_id: level2pool[k]?.user_id,
-            level: 2,
+        const level1pool = await Model.find({top1: user_id}).sort({createdAt: -1});
+        for(let j = 0; j < level1pool?.length; j++){
+          let level1Doc = {
+            user_id: level1pool[j]?.user_id,
+            level: 1,
             child: []
           }
-          level1Doc?.child?.push(level2Doc)
+          const level2pool = await Model.find({top1: level1pool[j]?.user_id}).sort({createdAt: -1});
+          for(let k = 0; k < level2pool?.length; k++){
+            let level2Doc = {
+              user_id: level2pool[k]?.user_id,
+              level: 2,
+              child: []
+            }
+            level1Doc?.child?.push(level2Doc)
+          }
+          doc?.child?.push(level1Doc)
         }
-        doc?.child?.push(level1Doc)
       }
       tree.push(doc)
     }
